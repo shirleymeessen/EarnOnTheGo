@@ -1,0 +1,14 @@
+extends layout
+block content
+    h2 Edit Review
+     .form
+         form(method="post")
+          each review in individual
+                fieldset
+                 label(for="name") Name:
+                 input(name="name", type="text", value="#{review.name}")
+                 label(for="date") Date:
+                 input(name="date", type="text", value="#{review.date}")
+                 label(for="content") Review:
+                 input(name="content", type="text", value="#{review.content}")
+                 button.button(type="submit") Edit This Review

@@ -1,0 +1,16 @@
+extends layout
+block content
+    h2 Leave a review
+
+     .form
+
+       form(method="post")
+
+        fieldset
+         label(for="name") Name:
+         input(name="name", type="text", placeholder="Please enter your name", required) 
+         label(for="date") Date:
+         input(name="date", type="text", placeholder="Please add today's date", required)
+         label(for="content") Review:
+         input(name="content", type="text", placeholder="Please add your review here", required)
+         button.button(type="submit") Post Review

@@ -1,0 +1,19 @@
+extends layout
+block content
+    h2.jobtitle Edit your Project/Task
+    .form
+        each row in res1
+         form(method="post")
+                fieldset
+                 label(for="newtitle") Title Project/Task:
+                 input(name="newtitle", type="text", value="#{row.Title}")
+                 label(for="newdescription") Description:
+                 input(name="newdescription", type="text", value="#{row.Description}")
+                 label(for="newqualifications") Qualifications:
+                 input(name="newqualifications", type="text", value="#{row.Qualifications}")
+                 label(for="newdeadline") Deadline:
+                 input(name="newdeadline", type="text", value="#{row.Deadline}")
+                 label(for="newamount") Amount:
+                 input(name="newamount", type="text", value="#{row.Amount}")
+                 button.button(type="submit") Edit Project/Task
+        

@@ -1,0 +1,323 @@
+body {
+    background-image: url("/fitness.jpg");
+    font-family: helvetica;
+}
+
+#topbar
+{
+width:100%;
+height:50px;
+background-color:#6666ff;
+}
+
+
+
+#logo
+{
+float:left;
+width:20%;
+}
+
+h1{
+float:right;
+font-family: helvetica;
+padding-left:5%;
+color: white;
+font-size:18px;
+}
+
+h2{
+   font-size: 18px; 
+   font-family:Arial;
+   margin-left:10px;
+}
+
+h3{
+    margin-top:40px;
+    font-family:helvetica;
+    font-size: 18px;
+    margin-left:10px;
+}
+
+
+
+
+
+#wrapper
+{
+width:90%;
+background-color:#FF910D;
+margin-top: 8%;
+margin-left:5%;
+margin-right:5%;
+}
+
+#navbar{
+    width:100%;
+    height:60px;
+  margin-bottom:10%;  
+}
+
+#navbar ul {
+    float:right;
+	width:100%;
+    list-style-type: none;
+}
+
+#navbar li {
+    float:left;
+	margin-left: 2%;
+	margin-right: 2%;
+	margin-bottom: 2%;
+}
+
+#navbar li a {
+    display: block;
+    color: black;
+	font-family: helvetica;
+	font-size: 15px;
+    padding:15px;
+    text-align: center;
+    text-decoration: none;
+}
+
+
+#footer{
+	height:150px;
+	background-color:#6666ff;
+	padding-top:20px;
+	width:100%;
+
+}
+  
+  #footer .footing{
+	display:block;  
+    width:20%;
+    color:white;
+    float:left;
+    padding-top:15px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-left:3%;
+	margin-right:2%;
+  }
+
+  #footer h4{
+      font-size: 16px;
+      color:white;
+      font-weight: bold;
+	  margin-left:17%;
+	 
+      
+  }
+  
+   .footing ul{
+	  display:block;
+	  text-align:left;
+	  list-style-type:none;
+  }
+
+  .footing a:link{
+    color:white;
+	font-size:12px;
+	text-decoration:none;
+  }
+  
+  .footing li{
+    color:white;
+	font-size:12px;
+  }
+  
+ 
+ .center { 
+top: 50%;
+ margin-left: 10%;
+}
+
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto;
+  grid-gap: 20px;
+  padding: 5px;
+}
+.grid-container > div {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 5px solid orange;
+  text-align: center;
+  font-size: 10px;
+}
+
+.grid-container-review {
+  display: block;
+  grid-template-columns: auto;
+  padding: 10px;
+}
+
+.job {
+  padding: 5px 0;
+ 
+}
+
+.jobtitle {
+   font-family:helvetica;
+   display: block;
+    color: black;
+    background-color: white;
+    text-align: left;
+    padding: 10px 4px;
+    text-decoration: none;
+    font-size: 16px
+    
+}
+
+.jobp {
+  font-family:helvetica;
+   display: block;
+    color: black;
+    text-align: left;
+    padding: 6px 10px;
+    text-decoration: none;
+    font-size: 14px
+    
+}
+
+.review {
+  padding: 2px 2px;
+ 
+}
+
+.reviewtitle {
+   font-family:helvetica;
+   display: block;
+    color: black;
+    background-color: white;
+    text-align: left;
+    padding: 15px 0px;
+    text-decoration: underline;
+    font-size: 16px
+    
+}
+
+.reviewp {
+  font-family:helvetica;
+   display: block;
+    color: black;
+    text-align:left;
+    padding: 2px 2px;
+    text-decoration: none;
+    font-size: 14px
+    
+}
+
+
+.button {
+    background-color:orange;
+    border-radius: 25px;
+    color: black;
+    padding: 10px 26px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.form {
+    border-radius: 20px;
+    padding: 20px;
+    width:80%;
+    margin-left:8%;
+    margin-top:3%;
+}
+
+
+input[type=text]{
+    font-size: 14px;
+    width: 100%;
+    padding: 12px 20px;
+    margin: 4px;
+    display: inline-block;
+    border: 1px solid orange;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#employersection{
+	height:500px;
+	background-color:#9be2f9;
+	width:100%;
+}
+
+#employer{
+	font-family:helvetica;
+	margin-left:10px;
+	width:50%;
+	height:200px;
+	float:left;
+	margin-top:40px;
+}
+
+#searchsection{
+    margin-left:10px;
+    margin-right:500px;
+    padding-bottom:40px;
+}
+
+.postlink{
+    margin-top:12px;
+}
+
+
+
+#reviewing{
+    height:300px;
+    width:100%;
+}
+
+#leavereview{
+    margin:5px;
+    padding-top:40px;
+    padding-bottom:40px;
+    background-color:#9be2f9;;
+    
+}
+
+#picture{
+    background-image: url('/employerf.jpg');
+    width:30%;
+    height:300px;
+    margin:20px;
+    padding-top:20px;
+    float:right;
+    background-color:white;
+    background-repeat:no-repeat;
+    background-size:cover;
+}
+
+#jobseekersection{
+	height:500px;
+	background-color:white;
+	width:100%;
+}
+
+#jobseeker{
+	font-family:helvetica;
+	width:30%;
+	height:200px;
+	float:right;
+	margin-left:40px;
+}
+
+#picjob{
+    background-image: url('/jobseeker.jpg');
+    width:30%;
+    height:300px;
+    float:left;
+    padding-right:40px;
+    background-color:white;
+    background-repeat:no-repeat;
+    background-size:cover;
+    display:block;
+    margin-top: 30px;
+}

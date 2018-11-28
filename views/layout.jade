@@ -1,0 +1,72 @@
+doctype html
+html
+  head
+    title EarnOnTheGo
+    meta(charset='UTF-8')
+    link(href='../app.css', rel='stylesheet', type='text/css')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+  body
+    #topbar
+      #logo
+        img(style='width:40%;height:85px', alt='sitelogo', src='/logo.jpg')
+        h1 EarnOnTheGo
+    nav
+      #navbar
+        ul
+          li
+            a(href='/') Home
+          li
+            a(href='/jobs') Projects/Tasks
+          li
+            a(href='/jobseekers') Jobseekers
+          li
+            a(href='/employers') Employers
+          li
+            a(href='/reviews') Reviews
+          
+          li
+            a(href='/register') Register
+          li
+            a(href='/login') Login
+    block content 
+    footer
+      #footer
+        .footing
+          h4 Contact information
+          ul
+            li @earnonthego.com
+            li 0800-567898
+            li M-F 8am-6pm
+            li
+              a(href='#Newsletter') Sign up for the Newsletter!
+        .footing
+          h4 Social Media
+          ul
+            li
+              a(href='www.earnonthego@facebook.com')
+                img.social__img(alt='facebook', src='/logofb.png')
+                | .  Facebook
+            li
+              a(href='wwww.earnonthego@instagram.com')
+                img.social__img(alt='instagram', src='/logoinsta.png')
+                |   Instagram
+            li
+              a(href='www.earnonthego@twitter.com')
+                img.social__img(alt='twitter', src='/logotwt.png')
+                |   Twitter
+        .footing
+          h4 News and Events
+          ul
+            li
+              a(href='#News') Latest News
+            li
+              a(href='#Events') Events
+            li
+              a(href='#Share') Share
+        .footing
+          h4 Policies
+          ul
+            li
+              a(href='#Involved') Cooky Policies
+            li
+              a(href='#Blog') Blog

@@ -1,0 +1,20 @@
+extends layout
+block content
+    h2 Post a Project/Task
+
+     .form
+
+       form(method="post")
+
+        fieldset
+         label(for="title") Title Project/Task:
+         input(name="title", type="text", placeholder="Please add the Title of your Project/Task", required) 
+         label(for="description") Description:
+         input(name="description", type="text", placeholder="Please briefly describe the Project/Task", required)
+         label(for="qualifications") Qualifications:
+         input(name="qualifications", type="text", placeholder="Please add Qualifications/Requirements", required)
+         label(for="deadline") Deadline:
+         input(name="deadline", type="text", placeholder="Please add the Deadline YYYY-MM-DD", required) 
+         label(for="amount") Amount:
+         input(name="amount", type="text", placeholder="Please add the Amount willing to pay for completion", required) 
+         button.button(type="submit") Post Project/Task

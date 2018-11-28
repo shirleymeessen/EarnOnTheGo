@@ -1,0 +1,13 @@
+extends layout
+block content
+    h2 Projects/Tasks
+    .grid-container
+          each row in res1
+              .job 
+                 h2.jobtitle #{row.Title}
+                 p.jobp Description: #{row.Description} 
+                 p.jobp Qualifications: #{row.Qualifications}
+                 p.jobp Deadline: #{row.Deadline} 
+                 p.jobp Amount: &euro;#{row.Amount}
+                 a.button(href="/edit/#{row.Id}") Edit
+                 a.button(href="/delete/#{row.Id}") Delete 
