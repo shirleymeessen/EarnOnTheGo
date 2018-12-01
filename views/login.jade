@@ -1,2 +1,15 @@
 extends layout
 block content
+    h2 Login to your account
+    
+     
+     .form
+
+       form(method="post")
+
+        fieldset
+         label(for="username") Username:
+         input(name="username", type="text", placeholder="Please add a username", required) 
+         label(for="password") Password:
+         input(name="password", type="password", placeholder="Please add a password", required)
+         button.button(type="submit") Login

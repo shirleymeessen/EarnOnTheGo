@@ -2,18 +2,7 @@
     {
         "name": "Shirley",
         "date": "2018-08-09",
-        "content": "Amazing application",
+        "content": "Amazing application toooo",
         "id": 2
-    },
-    {
-        "name": "test",
-        "id": 1,
-        "content": "test"
-    },
-    {
-        "name": "test",
-        "id": 3,
-        "date": "20-11-2019",
-        "content": "checking"
     }
 ]

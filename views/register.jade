@@ -1,2 +1,15 @@
 extends layout
 block content
+    h2 Register with EarnOnTheGo
+     .form
+
+       form(method="post")
+
+        fieldset
+         label(for="username") Username:
+         input(name="username", type="text", placeholder="Please add a username", required) 
+         label(for="password") Password:
+         input(name="password", type="password", placeholder="Please add a password", required)
+         label(for="company") Company:
+         input(name="company", type="text", placeholder="Please add your Company name if you are an Employer")
+         button.button(type="submit") Register

@@ -243,23 +243,34 @@ input[type=text]{
     box-sizing: border-box;
 }
 
+input[type=password]{
+    font-size: 14px;
+    width: 100%;
+    padding: 12px 20px;
+    margin: 4px;
+    display: inline-block;
+    border: 1px solid orange;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
 #employersection{
 	height:500px;
-	background-color:#9be2f9;
+	background-color:#FF910D;
 	width:100%;
 }
 
 #employer{
 	font-family:helvetica;
-	margin-left:10px;
+	margin-left:40px;
 	width:50%;
 	height:200px;
 	float:left;
-	margin-top:40px;
+	margin-top:80px;
 }
 
 #searchsection{
-    margin-left:10px;
+    margin-left:30px;
     margin-right:500px;
     padding-bottom:40px;
 }
@@ -279,7 +290,7 @@ input[type=text]{
     margin:5px;
     padding-top:40px;
     padding-bottom:40px;
-    background-color:#9be2f9;;
+    background-color:orange;
     
 }
 
@@ -287,8 +298,9 @@ input[type=text]{
     background-image: url('/employerf.jpg');
     width:30%;
     height:300px;
-    margin:20px;
-    padding-top:20px;
+    margin-top:100px;
+    margin-right:40px;
+    padding-top:5px;
     float:right;
     background-color:white;
     background-repeat:no-repeat;
@@ -306,7 +318,8 @@ input[type=text]{
 	width:30%;
 	height:200px;
 	float:right;
-	margin-left:40px;
+	margin-right:60px;
+	margin-top:80px;
 }
 
 #picjob{
@@ -319,5 +332,6 @@ input[type=text]{
     background-repeat:no-repeat;
     background-size:cover;
     display:block;
-    margin-top: 30px;
+    margin-top:100px;
+    margin-left:40px;
 }

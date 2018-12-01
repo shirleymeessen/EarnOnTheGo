@@ -1,15 +1,41 @@
 var express = require("express"); // call the express module which is default provided by 
 var app = express(); // declare our app which is the envoked express application
+var mysql = require('mysql'); // to give access to sql
 const path = require('path');
 const VIEWS = path.join(__dirname,'views');
 var fs = require('fs'); // needed for JSON = filesystem
-app.set('view engine', 'jade'); //this so you dont have to add jade to every file when rendering. 
-
+var flash    = require('connect-flash');
+// Passport
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var session  = require('express-session');
+var cookieParser = require('cookie-parser');
+var bcrypt = require('bcrypt-nodejs');
 var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-var mysql = require('mysql'); // to give access to sql
+app.use(cookieParser()); // read cookies (needed for auth)
 
+
+// required for passport
+app.use(session({
+	secret: 'vidyapathaisalwaysrunning',
+	resave: true,
+	saveUninitialized: true
+ } )); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+app.use(flash()); // use connect-flash for flash messages stored in session
+
+// routes ======================================================================
+//require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
+
+
+app.set('view engine', 'jade'); //this so you dont have to add jade to every file when rendering. 
+
+
+
+app.use(express.static("views"));
 app.use(express.static("scripts")); //to use the script folder contents
 app.use(express.static("images")); //to use the images folder contents
 app.use(express.static("models")); // to use the JSON file 
@@ -47,6 +73,17 @@ app.get('/createtable', function(req,res){
 res.send("Table created")
 });
 
+
+app.get('/createusers', function(req,res){
+let sql = 'CREATE TABLE users (Id int NOT NULL AUTO_INCREMENT PRIMARY KEY, Username varchar(255), Password varchar(255), Company varchar(255));'
+let query = db.query(sql,(err,res)=>{
+ if (err) throw err;
+ console.log(err);
+});
+res.send("Table created")
+ 
+});
+
 // end creating table 
 
 // add data to the database commented out to make sure not adding more data
@@ -63,20 +100,13 @@ res.send("Item added")
  
  
  
-//app.get('/alter', function(req,res){
-//let sql = 'ALTER TABLE jobs ADD (EmployerId int );'
-//let query = db.query(sql,(err,res)=>{
-//   if (err) throw err;
-//   console.log(res);
-//});
-//res.send("Altered")
-//});
+
  
  
  
  // query database to show if data has been inputted successfully
  app.get('/query', function(req,res){
- let sql = 'SELECT * from jobs' 
+ let sql = 'SELECT * from users' 
  let query = db.query(sql,(err,res)=>{
    if (err) throw err;
    console.log(res);
@@ -123,6 +153,18 @@ app.get('/jobseekers', function(req, res) {
 res.render('jobseekers', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
 console.log("Jobseekers page"); // used to output activity in the console
 });
+
+app.get('/employers', function(req, res) {
+res.render('employers', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+console.log("Employers page"); // used to output activity in the console
+});
+
+app.get('/register', function(req, res) {
+res.render('register', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+console.log("Registration"); // used to output activity in the console
+});
+
+
 
 
 
@@ -199,17 +241,197 @@ app.post('/search', function(req, res){
   if(err)
   throw(err);
  
-  res.render('jobs', {root: VIEWS, res1}); 
- console.log("Searching")
+  res.render('/jobs', {root: VIEWS, res1}); 
+ console.log("Searching");
 });
 
 });
 
+//=========================================== Register/Login and Logout Section=======================================
+	// show the login form
+	app.get('/login', function(req, res) {
+		res.render('login', { message: req.flash('loginMessage') });
+		console.log("Login");
+	});
+	
+
+
+	// process the login form
+	app.post('/login', passport.authenticate('local-login', {
+            successRedirect : '/confirmationlogin', // redirect to the secure profile section
+            failureRedirect : '/login', // redirect back to the signup page if there is an error
+            failureFlash : true // allow flash messages
+		}),
+        function(req, res) {
+            console.log("hello");
+
+            if (req.body.remember) {
+              req.session.cookie.maxAge = 1000 * 60 * 3;
+            } else {
+              req.session.cookie.expires = false;
+            }
+        res.redirect('/');
+    });
+
+//==Register==============
+	// show the signup form
+	app.get('/register', function(req, res) {
+		// render the page and pass in any flash data if it exists
+		res.render('register', { message: req.flash('signupMessage') });
+	});
+
+	// process the signup form
+	app.post('/register', passport.authenticate('local-signup', {
+		successRedirect : '/confirmationlogin', // redirect to the secure profile section
+		failureRedirect : '/register', // redirect back to the signup page if there is an error
+		failureFlash : true // allow flash messages
+	}));
+
+	// =====================================
+	// PROFILE SECTION =========================
+	// =====================================
+	// we will want this protected so you have to be logged in to visit
+	// we will use route middleware to verify this (the isLoggedIn function)
+	app.get('/confirmationlogin', isLoggedIn, function(req, res) {
+		res.render('confirmationlogin', {
+			user : req.user // get the user out of session and pass to template
+		});
+	});
+
+	// =====================================
+	// LOGOUT ==============================
+	// =====================================
+	app.get('/logout', function(req, res) {
+		req.logout();
+		res.redirect('/logout');
+	});
+
+
+// route middleware to make sure
+function isLoggedIn(req, res, next) {
+
+	// if user is authenticated in the session, carry on
+	if (req.isAuthenticated())
+		return next();
+
+	// if they aren't redirect them to the home page
+	res.redirect('/');
+}
 
 
 
 
-//JSON code
+
+
+
+//module.exports = function(passport) {
+
+    // =========================================================================
+    // passport session setup ==================================================
+    // =========================================================================
+    // required for persistent login sessions
+    // passport needs ability to serialize and unserialize users out of session
+
+    // used to serialize the user for the session
+    passport.serializeUser(function(user, done) {
+        done(null, user.Id); // Very important to ensure the case if the Id from your database table is the same as it is here
+    });
+
+    // used to deserialize the user
+   passport.deserializeUser(function(Id, done) {
+    db.query("SELECT * FROM users WHERE Id = ? ",[Id], function(err, rows){
+     done(err, rows[0]);
+     });
+  });
+
+
+
+
+
+
+    // =========================================================================
+    // LOCAL SIGNUP ============================================================
+    // =========================================================================
+    // we are using named strategies since we have one for login and one for signup
+    // by default, if there was no name, it would just be called 'local'
+
+    passport.use(
+        'local-signup',
+        new LocalStrategy({
+            // by default, local strategy uses username and password, we will override with email
+            usernameField : 'username',
+            passwordField : 'password',
+            passReqToCallback : true // allows us to pass back the entire request to the callback
+        },
+        function(req, username, password, done) {
+            // find a user whose email is the same as the forms email
+            // we are checking to see if the user trying to login already exists
+            db.query("SELECT * FROM users WHERE username = ?",[username], function(err, rows) {
+                if (err)
+                    return done(err);
+                if (rows.length) {
+                    return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
+                } else {
+                    // if there is no user with that username
+                    // create the user
+                    var newUserMysql = {
+                        username: username,
+                        password: bcrypt.hashSync(password, null, null), // use the generateHash function in our user model
+                        company: req.body.company,
+                    };
+                    
+                  
+
+                    var insertQuery = "INSERT INTO users (username, password, company) Values (?,?,?)";
+
+                    db.query(insertQuery,[newUserMysql.username, newUserMysql.password, newUserMysql.company],function(err, rows){
+                        newUserMysql.Id = rows.insertId;
+
+                        return done(null, newUserMysql);
+                    });
+                }
+            });
+        })
+    );
+    
+
+    // =========================================================================
+    // LOCAL LOGIN =============================================================
+    // =========================================================================
+    // we are using named strategies since we have one for login and one for signup
+    // by default, if there was no name, it would just be called 'local'
+
+    passport.use(
+        'local-login',
+        new LocalStrategy({
+            // by default, local strategy uses username and password, we will override with email
+            usernameField : 'username',
+            passwordField : 'password',
+            passReqToCallback : true // allows us to pass back the entire request to the callback
+        },
+        function(req, username, password, done) { // callback with email and password from our form
+            db.query("SELECT * FROM users WHERE username = ?",[username], function(err, rows){
+                if (err)
+                    return done(err);
+                if (!rows.length) {
+                    return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+                }
+
+                // if the user is found but the password is wrong
+                if (!bcrypt.compareSync(password, rows[0].Password))
+                    return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+
+                // all is well, return successful user
+                return done(null, rows[0]);
+            });
+        })
+    );
+//};
+
+
+
+
+//=================================================JSON code================================================================
 
 app.get('/reviews', function(req, res){
  res.render("reviews", {reviews:reviews}
