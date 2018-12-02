@@ -86,6 +86,19 @@ res.send("Table created")
 
 // end creating table 
 
+
+//app.get('/alter', function(req, res){ 
+//let sql = 'ALTER TABLE users ADD COLUMN admin BOOLEAN DEFAULT FALSE;' 
+///let query = db.query(sql, (err, res) => {  
+//    if(err) throw err;
+//    console.log(res);         
+//}); 
+//res.send("altered"); 
+//});
+
+
+
+
 // add data to the database commented out to make sure not adding more data
 app.get('/insert', function(req,res){
  let sql = 'INSERT INTO jobs (Title, Description, Qualifications, Deadline, Amount) VALUES (");'
@@ -149,7 +162,7 @@ res.render('index', {root: VIEWS});
 
 
 
-app.get('/jobseekers', function(req, res) {
+app.get('/jobseekers', isLoggedIn, isJobSeeker, function(req, res) {
 res.render('jobseekers', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
 console.log("Jobseekers page"); // used to output activity in the console
 });
@@ -159,12 +172,15 @@ res.render('employers', {root: VIEWS}); //changed to render instead of send beca
 console.log("Employers page"); // used to output activity in the console
 });
 
-app.get('/register', function(req, res) {
-res.render('register', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
-console.log("Registration"); // used to output activity in the console
+app.get('/notloggedin', function(req, res) {
+res.render('notloggedin', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+console.log("Need to login"); // used to output activity in the console
 });
 
-
+app.get('/notajobseeker', function(req, res) {
+res.render('notajobseeker', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+console.log("Not a jobseeker"); // used to output activity in the console
+});
 
 
 
@@ -185,7 +201,7 @@ console.log("jobspage"); // used to output activity in the console
 
 
 //EDIT the project/task in the application after making a route.
- app.get('/edit/:id', function(req, res){
+ app.get('/edit/:id',isLoggedIn, function(req, res){
  let sql = 'SELECT * FROM jobs WHERE Id = "'+req.params.id+'";'
  let query = db.query(sql, (err, res1) =>{
  if(err)
@@ -219,7 +235,7 @@ res.redirect("/jobs/");
 });
 
 //delete a PROJECT/TASK
-app.get('/delete/:id', function(req, res){
+app.get('/delete/:id',isLoggedIn, function(req, res){
 
  let sql = 'DELETE FROM jobs WHERE Id = "'+req.params.id+'";'
  let query = db.query(sql, (err, res1) =>{
@@ -236,16 +252,18 @@ res.redirect('/jobs');
 
 // SEARCH functionality
 app.post('/search', function(req, res){
- let sql = 'SELECT * FROM jobs WHERE (title LIKE "%'+req.body.search+'%" OR description LIKE "%'+req.body.search+'%" OR qualifications LIKE "%'+req.body.search+'%");'// query multiple fields 
+let sql = 'SELECT * FROM jobs WHERE (title LIKE "%'+req.body.search+'%" OR description LIKE "%'+req.body.search+'%" OR qualifications LIKE "%'+req.body.search+'%");'// query multiple fields 
  let query = db.query(sql, (err, res1) =>{
   if(err)
   throw(err);
  
-  res.render('/jobs', {root: VIEWS, res1}); 
- console.log("Searching");
+  res.render('jobs',{root: VIEWS, res1}); // use the render command so that the response object renders a HHTML page
+  console.log("Searching");
+ });
+ 
+ console.log("Now you are on the jobs page!");
 });
 
-});
 
 //=========================================== Register/Login and Logout Section=======================================
 	// show the login form
@@ -273,7 +291,7 @@ app.post('/search', function(req, res){
         res.redirect('/');
     });
 
-//==Register==============
+//==Register==============================================================================================
 	// show the signup form
 	app.get('/register', function(req, res) {
 		// render the page and pass in any flash data if it exists
@@ -287,9 +305,7 @@ app.post('/search', function(req, res){
 		failureFlash : true // allow flash messages
 	}));
 
-	// =====================================
-	// PROFILE SECTION =========================
-	// =====================================
+	// PROFILE SECTION ========================================================================================
 	// we will want this protected so you have to be logged in to visit
 	// we will use route middleware to verify this (the isLoggedIn function)
 	app.get('/confirmationlogin', isLoggedIn, function(req, res) {
@@ -298,16 +314,15 @@ app.post('/search', function(req, res){
 		});
 	});
 
-	// =====================================
-	// LOGOUT ==============================
-	// =====================================
+// LOGOUT =====================================================================
+
 	app.get('/logout', function(req, res) {
 		req.logout();
 		res.redirect('/logout');
 	});
 
 
-// route middleware to make sure
+// ===========RESTRICTING ACCESS JOBSEEKER/ EMPLOYER AND LOGGEDIN
 function isLoggedIn(req, res, next) {
 
 	// if user is authenticated in the session, carry on
@@ -315,7 +330,17 @@ function isLoggedIn(req, res, next) {
 		return next();
 
 	// if they aren't redirect them to the home page
-	res.redirect('/');
+	res.redirect('/notloggedin');
+}
+
+
+function isJobSeeker(req, res, next) {
+   
+// if user is jobseeker in the session, carry on
+if (req.user.jobseeker())
+return next();
+// if they aren't redirect them to the notloggedinpage
+res.redirect('/notajobseeker');
 }
 
 

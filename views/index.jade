@@ -1,7 +1,7 @@
 extends layout
 block content
      #searchsection
-      form(method="post" action="search")
+      form(method="post" action="/search")
       label(for="search") 
       input(name="search", type="text", Placeholder="Search Keywords,Qualifications and Projects")
       button.button(type="submit") Search
@@ -22,7 +22,7 @@ block content
        #jobseeker
         h2 Jobseekers
          p
-        | Travel and earn money when it suits you! Pick up projects/tasks that fit your skill set. Earn money, work on your skill set and do it from the comfort of your home, plane, bus it doesn't matter!
+        | Travel and earn money when it suits you! Pick up projects/tasks that fit your skills. Earn money, work on your skill set and do it from the comfort of your home, plane, bus it doesn't matter!
         .postlink
          a.button(href='/jobs') Find a Project/Task
        #picjob
