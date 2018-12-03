@@ -334,3 +334,57 @@ input[type=password]{
     margin-top:100px;
     margin-left:40px;
 }
+
+
+#searchforjobs{
+	height:250px;
+	margin-left:40px;
+	background-color:white;
+	width:100%;
+}
+
+
+#profilesection{
+	height:350px;
+	background-color:#FF910D;
+	width:100%;
+}
+
+
+
+#profile{
+	font-family:helvetica;
+	margin-left:40px;
+	height:200px;
+	float:left;
+	margin-top:40px;
+}
+
+#applications{
+	height:350px;
+	background-color:white;
+	width:100%;
+}
+
+
+
+#applies{
+	font-family:helvetica;
+	margin-left:40px;
+	height:100px;
+	width:30%;
+	float:left;
+	margin-top:40px;
+	padding-bottom: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+

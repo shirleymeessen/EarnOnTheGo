@@ -3,7 +3,7 @@ block content
     h2.jobtitle Edit your Profile
     .form
         each row in res1
-         form(method="post" action="/editprofile")
+         form(method="post")
                 fieldset
                  label(for="newname") Name:
                  input(name="newname", type="text", value="#{row.Name}")

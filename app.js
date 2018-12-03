@@ -334,7 +334,7 @@ res.render('editprofile', {root: VIEWS, res1});
 //Edit and update the database with the post request 
 
 app.post('/editprofile/:name', function(req, res){
-let sql = 'UPDATE profile SET Name = "'+req.body.newname+'", Emailaddress = "'+req.body.newemailaddress+'", Skills = "'+req.body.newskills+'", Education = "'+req.body.neweducation+'", Qualifications = '+req.body.newqualifications+' WHERE Name = "'+req.params.name+'";'
+let sql = 'UPDATE profile SET Name = "'+req.body.newname+'", Emailaddress = "'+req.body.newemailaddress+'", Skills = "'+req.body.newskills+'", Education = "'+req.body.neweducation+'", Qualifications = "'+req.body.newqualifications+'" WHERE Name = "'+req.params.name+'";'
 let query = db.query(sql, (err, res) =>{
 if(err) throw err;
 console.log(res);
