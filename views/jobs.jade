@@ -1,10 +1,13 @@
 extends layout
 block content
     h2 Projects/Tasks
+    .postlink
+    a.button(href='/postjob') Post Project/Task
     .grid-container
-          each row in res1
+          each row in res2
               .job 
                  h2.jobtitle #{row.Title}
+                 p.jobp Company Name: #{row.Company}
                  p.jobp Description: #{row.Description} 
                  p.jobp Qualifications: #{row.Qualifications}
                  p.jobp Deadline: #{row.Deadline} 

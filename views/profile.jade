@@ -1,0 +1,13 @@
+extends layout
+block content
+    h2 Profile
+    .grid-container
+          each row in res1
+              .job 
+                 h2.jobtitle #{row.Name}
+                 p.jobp Emailaddress: #{row.Emailaddress}
+                 p.jobp Skills: #{row.Skills} 
+                 p.jobp Education: #{row.Education}
+                 p.jobp Qualifications: #{row.Qualifications} 
+                 a.button(href="/editprofile/#{row.Name}") Edit
+                 a.button(href="/deleteprofile/#{row.Name}") Delete 

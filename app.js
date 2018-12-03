@@ -49,7 +49,8 @@ const db = mysql.createConnection({
  host: 'den1.mysql2.gear.host',
  user: 'earnonthego',
  password: 'Et16Z~u8Jj6-',
- database: 'earnonthego'
+ database: 'earnonthego',
+ multipleStatements: true // multiple queries at the same time
 });
 
 // check to see if connected to the database 
@@ -74,6 +75,7 @@ res.send("Table created")
 });
 
 
+
 app.get('/createusers', function(req,res){
 let sql = 'CREATE TABLE users (Id int NOT NULL AUTO_INCREMENT PRIMARY KEY, Username varchar(255), Password varchar(255), Company varchar(255));'
 let query = db.query(sql,(err,res)=>{
@@ -87,14 +89,35 @@ res.send("Table created")
 // end creating table 
 
 
-//app.get('/alter', function(req, res){ 
-//let sql = 'ALTER TABLE users ADD COLUMN admin BOOLEAN DEFAULT FALSE;' 
-///let query = db.query(sql, (err, res) => {  
-//    if(err) throw err;
-//    console.log(res);         
-//}); 
-//res.send("altered"); 
+//app.get('/createprofile', function(req,res){
+//let sql = 'CREATE TABLE profile (profileId int NOT NULL AUTO_INCREMENT PRIMARY KEY, Id int, Name varchar(255), Emailaddress varchar(255), Skills varchar(255), Education varchar(255), Qualifications varchar(255), FOREIGN KEY (Id) REFERENCES users (Id));'
+//let query = db.query(sql,(err,res)=>{
+// if (err) throw err;
+// console.log(err);
 //});
+//res.send("Table created")
+ 
+//});
+
+
+
+app.get('/alter', function(req, res){ 
+let sql = 'ALTER TABLE profile ADD PRIMARY KEY (profileId);'
+let query = db.query(sql, (err, res) => {  
+    if(err) throw err;
+  console.log(res);         
+}); 
+res.send("altered"); 
+});
+
+app.get('/drop', function(req, res){ 
+let sql = 'DROP TABLE profile;'
+let query = db.query(sql, (err, res) => {  
+    if(err) throw err;
+  console.log(res);         
+}); 
+res.send("dropped"); 
+});
 
 
 
@@ -119,7 +142,7 @@ res.send("Item added")
  
  // query database to show if data has been inputted successfully
  app.get('/query', function(req,res){
- let sql = 'SELECT * from users' 
+ let sql = 'SELECT * from profile' 
  let query = db.query(sql,(err,res)=>{
    if (err) throw err;
    console.log(res);
@@ -137,7 +160,22 @@ res.render('index', {root: VIEWS});
 console.log("Homepage"); // used to output activity in the console
 });
 
+// ==================NOT WORKING BUTTON NOT SUBMITTING INFO?!?!SEARCH functionality
+app.post('/search', function(req, res){
+let sql = 'SELECT * FROM jobs WHERE (title LIKE "%'+req.body.search+'%" OR description LIKE "%'+req.body.search+'%" OR qualifications LIKE "%'+req.body.search+'%");'// query multiple fields 
+ let query = db.query(sql, (err, res2) =>{
+  if(err)
+  throw(err);
+ 
+  res.render('jobs',{root: VIEWS, res2}); // use the render command so that the response object renders a HHTML page
+  console.log("Searching");
+ });
+ 
+ console.log("Now you are on the jobs page!");
+});
+//===========================================================================================
 
+//============================================POSTJOBSECTION======================================
 
 //to render the page to create a job. 
 app.get('/postjob', function(req, res){
@@ -147,67 +185,53 @@ console.log("Post a job page"); // used to output activity in the console
 
 
 
-
 //to submit information from the post a job page to database table jobs
 app.post('/postjob', function(req, res){
-let sql = 'INSERT INTO jobs (Title, Description, Qualifications, Deadline, Amount) VALUES ("'+req.body.title+'", "'+req.body.description+'", "'+req.body.qualifications+'", "'+req.body.deadline+'", '+req.body.amount+');' 
+let sql = 'INSERT INTO jobs (Title, Company, Description, Qualifications, Deadline, Amount) VALUES ("'+req.body.title+'", "'+req.body.company+'", "'+req.body.description+'", "'+req.body.qualifications+'", "'+req.body.deadline+'", '+req.body.amount+');' 
 let query = db.query(sql,(err,res)=>{
 if (err) throw err;
 console.log(res);
-console.log("product added");
+console.log("job added");
 });
   
 res.render('index', {root: VIEWS});
 });
 
-
-
-app.get('/jobseekers', isLoggedIn, isJobSeeker, function(req, res) {
-res.render('jobseekers', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
-console.log("Jobseekers page"); // used to output activity in the console
-});
-
-app.get('/employers', function(req, res) {
-res.render('employers', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
-console.log("Employers page"); // used to output activity in the console
-});
-
-app.get('/notloggedin', function(req, res) {
-res.render('notloggedin', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
-console.log("Need to login"); // used to output activity in the console
-});
-
-app.get('/notajobseeker', function(req, res) {
-res.render('notajobseeker', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
-console.log("Not a jobseeker"); // used to output activity in the console
-});
-
-
-
-
 // to show the jobs on the jobspage from the database
 app.get('/jobs', function(req, res){
 let sql = 'SELECT * from jobs;' 
-  let query = db.query(sql, (err, res1) =>{
+  let query = db.query(sql, (err, res2) =>{
     if(err) 
     throw (err);
 
-res.render('jobs', {root: VIEWS, res1});
+res.render('jobs', {root: VIEWS, res2});
 
 });
 console.log("jobspage"); // used to output activity in the console
 });
 
+app.get('/profile', function(req, res){
+let sql = 'SELECT * from profile;' 
+  let query = db.query(sql, (err, res1) =>{
+    if(err) 
+    throw (err);
+
+res.render('profile', {root: VIEWS, res1});
+
+});
+console.log("profile page"); // used to output activity in the console
+});
+
 
 
 //EDIT the project/task in the application after making a route.
- app.get('/edit/:id',isLoggedIn, function(req, res){
+ app.get('/edit/:id', function(req, res){
  let sql = 'SELECT * FROM jobs WHERE Id = "'+req.params.id+'";'
- let query = db.query(sql, (err, res1) =>{
+ let query = db.query(sql, (err, res2) =>{
  if(err)
  throw(err);
 
-res.render('edit', {root: VIEWS, res1}); 
+res.render('edit', {root: VIEWS, res2}); 
 
   });
 
@@ -235,10 +259,10 @@ res.redirect("/jobs/");
 });
 
 //delete a PROJECT/TASK
-app.get('/delete/:id',isLoggedIn, function(req, res){
+app.get('/delete/:id', function(req, res){
 
  let sql = 'DELETE FROM jobs WHERE Id = "'+req.params.id+'";'
- let query = db.query(sql, (err, res1) =>{
+ let query = db.query(sql, (err, res2) =>{
  if(err)
  throw(err);
 res.redirect('/jobs'); 
@@ -249,20 +273,117 @@ res.redirect('/jobs');
 
 });
 
+//======================= END JOB SECTION
 
-// SEARCH functionality
-app.post('/search', function(req, res){
-let sql = 'SELECT * FROM jobs WHERE (title LIKE "%'+req.body.search+'%" OR description LIKE "%'+req.body.search+'%" OR qualifications LIKE "%'+req.body.search+'%");'// query multiple fields 
- let query = db.query(sql, (err, res1) =>{
-  if(err)
-  throw(err);
- 
-  res.render('jobs',{root: VIEWS, res1}); // use the render command so that the response object renders a HHTML page
-  console.log("Searching");
- });
- 
- console.log("Now you are on the jobs page!");
+//================================JOBSEEKERS PROFILE=======================================
+app.get('/profile', function(req, res){
+res.render('profile', {root: VIEWS});
+console.log("Profile Jobseeker"); // used to output activity in the console
 });
+
+//to render the page to create a profile. 
+app.get('/createprofile', function(req, res){
+res.render('createprofile', {root: VIEWS});
+console.log("Create Profile Jobseeker"); // used to output activity in the console
+});
+
+
+
+//to submit information to profile table
+app.post('/createprofile', function(req, res){
+let sql = 'INSERT INTO profile (Name, Emailaddress, Skills, Education, Qualifications) VALUES ("'+req.body.name+'", "'+req.body.emailaddress+'", "'+req.body.skills+'", "'+req.body.education+'", "'+req.body.qualifications+'");' 
+let query = db.query(sql,(err,res)=>{
+if (err) throw err;
+console.log(res);
+console.log("profile created");
+});
+  
+res.render('jobseekers', {root: VIEWS});
+});
+
+// to show the jobs on the jobspage from the database
+app.get('/profile', function(req, res){
+let sql = 'SELECT * from profile;' 
+  let query = db.query(sql, (err, res1) =>{
+    if(err) 
+    throw (err);
+
+res.render('profile', {root: VIEWS, res1});
+
+});
+console.log("profile"); // used to output activity in the console
+});
+
+
+
+//EDIT the profile in the application after making a route.
+ app.get('/editprofile/:name', function(req, res){
+ let sql = 'SELECT * FROM profile WHERE Name = "'+req.params.name+'";'
+ let query = db.query(sql, (err, res1) =>{
+ if(err)
+ throw(err);
+
+res.render('editprofile', {root: VIEWS, res1}); 
+
+});
+
+ console.log("Editing section!");
+
+});
+
+//Edit and update the database with the post request 
+
+app.post('/editprofile/:name', function(req, res){
+let sql = 'UPDATE profile SET Name = "'+req.body.newname+'", Emailaddress = "'+req.body.newemailaddress+'", Skills = "'+req.body.newskills+'", Education = "'+req.body.neweducation+'", Qualifications = '+req.body.newqualifications+' WHERE Name = "'+req.params.name+'";'
+let query = db.query(sql, (err, res) =>{
+if(err) throw err;
+console.log(res);
+
+
+})
+
+res.redirect("/jobseekers");
+
+});
+
+//delete a profile
+app.get('/deleteprofile/:name', function(req, res){
+ let sql = 'DELETE FROM profile WHERE Name = "'+req.params.name+'";'
+ let query = db.query(sql, (err, res1) =>{
+ if(err)
+ throw(err);
+res.redirect('/jobseekers'); 
+
+ });
+
+ console.log("deleted !");
+
+});
+//=================================END JOBSEEKERS PROFILE
+
+//===============================================
+
+app.get('/jobseekers', function(req, res) {
+res.render('jobseekers', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+console.log("Jobseekers page"); // used to output activity in the console
+});
+
+app.get('/employers', function(req, res) {
+res.render('employers', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+console.log("Employers page"); // used to output activity in the console
+});
+
+app.get('/notloggedin', function(req, res) {
+res.render('notloggedin', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+console.log("Need to login"); // used to output activity in the console
+});
+
+app.get('/notajobseeker', function(req, res) {
+res.render('notajobseeker', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+console.log("Not a jobseeker"); // used to output activity in the console
+});
+
+
 
 
 //=========================================== Register/Login and Logout Section=======================================
@@ -334,14 +455,14 @@ function isLoggedIn(req, res, next) {
 }
 
 
-function isJobSeeker(req, res, next) {
+//function isJobSeeker(req, res, next) {
    
 // if user is jobseeker in the session, carry on
-if (req.user.jobseeker())
-return next();
+//if (req.user.jobseeker())
+//return next();
 // if they aren't redirect them to the notloggedinpage
-res.redirect('/notajobseeker');
-}
+//res.redirect('/notajobseeker');
+//}
 
 
 
@@ -351,9 +472,7 @@ res.redirect('/notajobseeker');
 
 //module.exports = function(passport) {
 
-    // =========================================================================
-    // passport session setup ==================================================
-    // =========================================================================
+// passport session setup ==================================================
     // required for persistent login sessions
     // passport needs ability to serialize and unserialize users out of session
 
@@ -370,20 +489,13 @@ res.redirect('/notajobseeker');
   });
 
 
-
-
-
-
-    // =========================================================================
-    // LOCAL SIGNUP ============================================================
-    // =========================================================================
-    // we are using named strategies since we have one for login and one for signup
-    // by default, if there was no name, it would just be called 'local'
+// LOCAL SIGNUP ============================================================
+ 
 
     passport.use(
         'local-signup',
         new LocalStrategy({
-            // by default, local strategy uses username and password, we will override with email
+        
             usernameField : 'username',
             passwordField : 'password',
             passReqToCallback : true // allows us to pass back the entire request to the callback
@@ -420,11 +532,9 @@ res.redirect('/notajobseeker');
     );
     
 
-    // =========================================================================
-    // LOCAL LOGIN =============================================================
-    // =========================================================================
-    // we are using named strategies since we have one for login and one for signup
-    // by default, if there was no name, it would just be called 'local'
+
+//================================================= LOCAL LOGIN =============================================================
+
 
     passport.use(
         'local-login',
@@ -466,7 +576,7 @@ app.get('/reviews', function(req, res){
 );
 
 
-
+//===========================CREATE NEW REVIEW
 app.get('/addreview', function(req, res) {
 res.render('addreview', {root: VIEWS});
 console.log("Review page"); // used to output activity in the console
@@ -520,43 +630,25 @@ console.log(newId);
 
 });
 
+//==========================================DELETE REVIEWS
 
-
-app.get('/deletereviews/:id', function(req, res) {
-  var json = JSON.stringify(reviews); 
-
-  
-
- fs.readFile('./models/reviews.json', 'utf8', function readFileCallback(err, data){
-    if (err){
-    console.log(err);
-    } else {
-
-
-var keytoFind = req.params.id; 
-
-      var str2 = reviews; 
-      var data = str2; 
-      var index2 = data.map(function(d) { return d['id']; }).indexOf(keytoFind) 
-
-  
-reviews.splice(index2 ,1); 
-json = JSON.stringify(reviews, null, 4); 
-fs.writeFile('./models/reviews.json', json, 'utf8'); 
-
-  console.log("Review Deleted");
-
-
-}});
-
-
+app.get('/deletereviews/:name', function(req, res) {
+var json = JSON.stringify(reviews);
+fs.readFile('./models/reviews.json')
+var keytoFind = req.params.name; // position represents the location in the json array remember 0 is the first
+var index2 = reviews.map(function(d) { return d['name']; }).indexOf(keytoFind) // finds the position of the item in the json array and sets it as a variable called index2
+console.log("Review " + index2 + "    " + keytoFind)
+reviews.splice(index2, 1); // deletes one item from position represented by index 2 from above
+json = JSON.stringify(reviews, null, 4); //convert it back to json
+    fs.writeFile('./models/reviews.json', json, 'utf8'); // write it back 
+console.log("Review Deleted");
 res.redirect("/reviews");
-
 });
 
 
 
-//edit review page showing the review that you want to edit
+
+//============================Edit review page showing the review that you want to edit
 app.get('/editreview/:id', function(req, res) {
  function chooseProd(individual){
   return individual.id === parseInt(req.params.id)
@@ -592,8 +684,10 @@ app.post('/editreview/:id', function(req,res){
 
 
 
-
-
+//for when they go to a non existing URL
+app.get('*', function (req, res) {
+  res.status(404).send("Page does not exist.");
+});
 
 // this is needed for the application to run in NODE
 app.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function() {

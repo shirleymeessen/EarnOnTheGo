@@ -1,0 +1,20 @@
+extends layout
+block content
+    h2 Create your profile and apply to jobs! 
+
+     .form
+
+       form(method="post" action="/createprofile")
+
+        fieldset
+         label(for="name") First and Last Name:
+         input(name="name", type="text", placeholder="Please add your full name", required)
+         label(for="emailaddress") Emailaddress:
+         input(name="emailaddress", type="text", placeholder="Please add your emailaddress", required)
+         label(for="skills") Skills:
+         input(name="skills", type="text", placeholder="Please add your skills", required)
+         label(for="education") Education:
+         input(name="education", type="text", placeholder="Please add your Education", required)
+         label(for="qualifications") Qualifications:
+         input(name="qualifications", type="text", placeholder="Please add any Qualifications", required)
+         button.button(type="submit") Save your profile

@@ -1,0 +1,18 @@
+extends layout
+block content
+    h2.jobtitle Edit your Profile
+    .form
+        each row in res1
+         form(method="post" action="/editprofile")
+                fieldset
+                 label(for="newname") Name:
+                 input(name="newname", type="text", value="#{row.Name}")
+                 label(for="newemailaddress") Emailaddress:
+                 input(name="newemailaddress", type="text", value="#{row.Emailaddress}")
+                 label(for="newskills") Skills:
+                 input(name="newskills", type="text", value="#{row.Skills}")
+                 label(for="neweducation") Education:
+                 input(name="neweducation", type="text", value="#{row.Education}")
+                 label(for="newqualifications") Qualifications:
+                 input(name="newqualifications", type="text", value="#{row.Qualifications}")
+                 button.button(type="submit") Edit Profile
