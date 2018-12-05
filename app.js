@@ -210,19 +210,6 @@ res.render('jobs', {root: VIEWS, res2});
 console.log("jobspage"); // used to output activity in the console
 });
 
-app.get('/profile', function(req, res){
-let sql = 'SELECT * from profile;' 
-  let query = db.query(sql, (err, res1) =>{
-    if(err) 
-    throw (err);
-
-res.render('profile', {root: VIEWS, res1});
-
-});
-console.log("profile page"); // used to output activity in the console
-});
-
-
 
 //EDIT the project/task in the application after making a route.
  app.get('/edit/:id', function(req, res){
@@ -260,7 +247,6 @@ res.redirect("/jobs/");
 
 //delete a PROJECT/TASK
 app.get('/delete/:id', function(req, res){
-
  let sql = 'DELETE FROM jobs WHERE Id = "'+req.params.id+'";'
  let query = db.query(sql, (err, res2) =>{
  if(err)
@@ -276,10 +262,21 @@ res.redirect('/jobs');
 //======================= END JOB SECTION
 
 //================================JOBSEEKERS PROFILE=======================================
-app.get('/profile', function(req, res){
-res.render('profile', {root: VIEWS});
-console.log("Profile Jobseeker"); // used to output activity in the console
+
+
+// to show the jobs on the jobspage from the database
+app.get('/profile/:profileid', function(req, res){
+let sql = 'SELECT * from profile WHERE profileId = "'+req.params.profileid+'";'
+  let query = db.query(sql, (err, res1) =>{
+    if(err) 
+    throw (err);
+
+res.render('profile', {root: VIEWS, res1});
+
 });
+console.log("profile"); // used to output activity in the console
+});
+
 
 //to render the page to create a profile. 
 app.get('/createprofile', function(req, res){
@@ -301,18 +298,6 @@ console.log("profile created");
 res.render('jobseekers', {root: VIEWS});
 });
 
-// to show the jobs on the jobspage from the database
-app.get('/profile', function(req, res){
-let sql = 'SELECT * from profile;' 
-  let query = db.query(sql, (err, res1) =>{
-    if(err) 
-    throw (err);
-
-res.render('profile', {root: VIEWS, res1});
-
-});
-console.log("profile"); // used to output activity in the console
-});
 
 
 
@@ -363,24 +348,28 @@ res.redirect('/jobseekers');
 
 //===============================================
 
-app.get('/jobseekers', function(req, res) {
-res.render('jobseekers', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
-console.log("Jobseekers page"); // used to output activity in the console
-});
 
-app.get('/employers', function(req, res) {
-res.render('employers', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
-console.log("Employers page"); // used to output activity in the console
-});
+
+
 
 app.get('/notloggedin', function(req, res) {
 res.render('notloggedin', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
 console.log("Need to login"); // used to output activity in the console
 });
 
-app.get('/notajobseeker', function(req, res) {
-res.render('notajobseeker', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+app.get('/notemployer', function(req, res) {
+res.render('notemployer', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+console.log("Not an employer"); // used to output activity in the console
+});
+
+app.get('/notjobseeker', function(req, res) {
+res.render('notjobseeker', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
 console.log("Not a jobseeker"); // used to output activity in the console
+});
+
+app.get('/logout', function(req, res) {
+res.render('logout', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+console.log("logout"); // used to output activity in the console
 });
 
 
@@ -454,15 +443,23 @@ function isLoggedIn(req, res, next) {
 	res.redirect('/notloggedin');
 }
 
+    
 
-//function isJobSeeker(req, res, next) {
-   
-// if user is jobseeker in the session, carry on
-//if (req.user.jobseeker())
-//return next();
-// if they aren't redirect them to the notloggedinpage
-//res.redirect('/notajobseeker');
-//}
+app.get('/employers',isLoggedIn, function (req, res) {
+    if (req.user && req.user.employer !== 1) {
+       return res.redirect("/notemployer");
+    }
+    res.render('employers', { root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
+    console.log("Employers page"); // used to output activity in the console
+});
+
+app.get('/jobseekers',isLoggedIn, function (req, res) {
+    if (req.user && req.user.jobseeker !== 1) {
+      return res.redirect("/notjobseeker");
+    }
+    res.render('jobseekers', { root: VIEWS }); //changed to render instead of send because changed to Jade to render as html
+    console.log("Jobseekers page"); // used to output activity in the console
+});
 
 
 
