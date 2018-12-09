@@ -3,7 +3,7 @@ block content
     h2 Edit Review
      .form
          form(method="post")
-          each review in individual
+           each review in indOne
                 fieldset
                  label(for="name") Name:
                  input(name="name", type="text", value="#{review.name}")

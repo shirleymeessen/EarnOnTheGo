@@ -12,7 +12,15 @@ block content
         h2.reviewtitle Name: #{review.name}
         p.reviewp Date: #{review.date}
         p.reviewp Review: #{review.content}
-        a.button(href="/deletereviews/#{review.id}") Delete
+        a.button(href="/deletereview/#{review.id}") Delete
         a.button(href="/editreview/#{review.id}") Edit
+        
+         if (!user)  
+          a(href="/login") Login   
+          a(href="/register") Register 
+         if (user)  
+          p You are currently logged in as #{user.Username}  
+          a(href="/logout") Logout
+        
         
         

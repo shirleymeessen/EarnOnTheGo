@@ -1,6 +1,9 @@
 extends layout
 block content
     h2 Profile
+    if (user)  
+     p You are currently logged in as username: #{user.Username}  
+     a(href="/logout") Logout
     .grid-container
            each row in res1
               .job 
@@ -11,3 +14,6 @@ block content
                  p.jobp Qualifications: #{row.Qualifications} 
                  a.button(href="/editprofile/#{row.Name}") Edit
                  a.button(href="/deleteprofile/#{row.Name}") Delete 
+                 
+                   
+          

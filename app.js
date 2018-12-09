@@ -101,14 +101,25 @@ res.send("Table created")
 
 
 
-app.get('/alter', function(req, res){ 
-let sql = 'ALTER TABLE profile ADD PRIMARY KEY (profileId);'
+app.get('/alterye', function(req, res){ 
+let sql = 'UPDATE users SET employer=TRUE, jobseeker=FALSE WHERE Id=24;'
 let query = db.query(sql, (err, res) => {  
     if(err) throw err;
   console.log(res);         
 }); 
 res.send("altered"); 
 });
+
+app.get('/alter', function(req, res){ 
+let sql = 'ALTER TABLE profile ADD users_id SMALLINT UNSIGNED NOT NULL DEFAULT 0;ALTER TABLE profile ADD CONSTRAINT fk_users_id FOREIGN KEY (users_id) REFERENCES users(Id);;'
+let query = db.query(sql, (err, res) => {  
+    if(err) throw err;
+  console.log(res);         
+}); 
+res.send("altered"); 
+});
+
+
 
 app.get('/drop', function(req, res){ 
 let sql = 'DROP TABLE profile;'
@@ -124,7 +135,7 @@ res.send("dropped");
 
 // add data to the database commented out to make sure not adding more data
 app.get('/insert', function(req,res){
- let sql = 'INSERT INTO jobs (Title, Description, Qualifications, Deadline, Amount) VALUES (");'
+ let sql = 'INSERT INTO users (Username, Password, Company, jobseeker, employer, admin) VALUES ("employer","employer", "employer", FALSE, TRUE, FALSE);'
 let query = db.query(sql,(err,res)=>{
    if (err) throw err;
    console.log(res);
@@ -142,7 +153,7 @@ res.send("Item added")
  
  // query database to show if data has been inputted successfully
  app.get('/query', function(req,res){
- let sql = 'SELECT * from profile' 
+ let sql = 'SELECT * from users' 
  let query = db.query(sql,(err,res)=>{
    if (err) throw err;
    console.log(res);
@@ -160,7 +171,7 @@ res.render('index', {root: VIEWS});
 console.log("Homepage"); // used to output activity in the console
 });
 
-// ==================NOT WORKING BUTTON NOT SUBMITTING INFO?!?!SEARCH functionality
+// ==================SEARCH functionality
 app.post('/search', function(req, res){
 let sql = 'SELECT * FROM jobs WHERE (title LIKE "%'+req.body.search+'%" OR description LIKE "%'+req.body.search+'%" OR qualifications LIKE "%'+req.body.search+'%");'// query multiple fields 
  let query = db.query(sql, (err, res2) =>{
@@ -178,10 +189,10 @@ let sql = 'SELECT * FROM jobs WHERE (title LIKE "%'+req.body.search+'%" OR descr
 //============================================POSTJOBSECTION======================================
 
 //to render the page to create a job. 
-app.get('/postjob', function(req, res){
-res.render('postjob', {root: VIEWS});
-console.log("Post a job page"); // used to output activity in the console
-});
+//app.get('/postjob', function(req, res){
+//res.render('postjob', {root: VIEWS});
+//console.log("Post a job page"); // used to output activity in the console
+//});
 
 
 
@@ -212,7 +223,7 @@ console.log("jobspage"); // used to output activity in the console
 
 
 //EDIT the project/task in the application after making a route.
- app.get('/edit/:id', function(req, res){
+ app.get('/edit/:id',isLoggedIn, function(req, res){
  let sql = 'SELECT * FROM jobs WHERE Id = "'+req.params.id+'";'
  let query = db.query(sql, (err, res2) =>{
  if(err)
@@ -225,6 +236,9 @@ res.render('edit', {root: VIEWS, res2});
  console.log("Edit project/task page!");
 
 });
+
+
+
 
 //Edit and update the database with the post request 
 
@@ -246,7 +260,7 @@ res.redirect("/jobs/");
 });
 
 //delete a PROJECT/TASK
-app.get('/delete/:id', function(req, res){
+app.get('/delete/:id', isLoggedIn, function(req, res){
  let sql = 'DELETE FROM jobs WHERE Id = "'+req.params.id+'";'
  let query = db.query(sql, (err, res2) =>{
  if(err)
@@ -265,16 +279,17 @@ res.redirect('/jobs');
 
 
 // to show the jobs on the jobspage from the database
-app.get('/profile/:profileid', function(req, res){
-let sql = 'SELECT * from profile WHERE profileId = "'+req.params.profileid+'";'
+app.get('/profile', function(req, res){
+let sql = 'SELECT * from profile;'
   let query = db.query(sql, (err, res1) =>{
     if(err) 
     throw (err);
-
-res.render('profile', {root: VIEWS, res1});
-
+    var username = req.user.Username
+res.render('profile', {root: VIEWS, res1,user:req.user, name:req.user.Username} );
+console.log(username); // used to output activity in the console
 });
 console.log("profile"); // used to output activity in the console
+
 });
 
 
@@ -367,10 +382,7 @@ res.render('notjobseeker', {root: VIEWS}); //changed to render instead of send b
 console.log("Not a jobseeker"); // used to output activity in the console
 });
 
-app.get('/logout', function(req, res) {
-res.render('logout', {root: VIEWS}); //changed to render instead of send because changed to Jade to render as html
-console.log("logout"); // used to output activity in the console
-});
+
 
 
 
@@ -415,7 +427,7 @@ console.log("logout"); // used to output activity in the console
 		failureFlash : true // allow flash messages
 	}));
 
-	// PROFILE SECTION ========================================================================================
+	// Loggedin SECTION ========================================================================================
 	// we will want this protected so you have to be logged in to visit
 	// we will use route middleware to verify this (the isLoggedIn function)
 	app.get('/confirmationlogin', isLoggedIn, function(req, res) {
@@ -426,10 +438,10 @@ console.log("logout"); // used to output activity in the console
 
 // LOGOUT =====================================================================
 
-	app.get('/logout', function(req, res) {
-		req.logout();
-		res.redirect('/logout');
-	});
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
 
 
 // ===========RESTRICTING ACCESS JOBSEEKER/ EMPLOYER AND LOGGEDIN
@@ -461,6 +473,17 @@ app.get('/jobseekers',isLoggedIn, function (req, res) {
     console.log("Jobseekers page"); // used to output activity in the console
 });
 
+
+
+app.get('/postjob',isLoggedIn, function (req, res) {
+   if (req.user && req.user.employer !== 1) {
+      return res.redirect("/notemployer");
+    }
+    res.render('postjob', { root: VIEWS }); //changed to render instead of send because changed to Jade to render as html
+    console.log("Postjob"); // used to output activity in the console
+});
+
+//Password to login as employer is Username: Charlie Password: Charlie 
 
 
 
@@ -566,7 +589,7 @@ app.get('/jobseekers',isLoggedIn, function (req, res) {
 //=================================================JSON code================================================================
 
 app.get('/reviews', function(req, res){
- res.render("reviews", {reviews:reviews}
+ res.render("reviews", {reviews:reviews, user:req.user, name:req.user.username}
  );
  console.log("Review Page");
 }
@@ -629,34 +652,35 @@ console.log(newId);
 
 //==========================================DELETE REVIEWS
 
-app.get('/deletereviews/:name', function(req, res) {
-var json = JSON.stringify(reviews);
-fs.readFile('./models/reviews.json')
-var keytoFind = req.params.name; // position represents the location in the json array remember 0 is the first
-var index2 = reviews.map(function(d) { return d['name']; }).indexOf(keytoFind) // finds the position of the item in the json array and sets it as a variable called index2
-console.log("Review " + index2 + "    " + keytoFind)
-reviews.splice(index2, 1); // deletes one item from position represented by index 2 from above
-json = JSON.stringify(reviews, null, 4); //convert it back to json
-    fs.writeFile('./models/reviews.json', json, 'utf8'); // write it back 
-console.log("Review Deleted");
-res.redirect("/reviews");
+app.get('/deletereview/:id', function(req, res){
+ var json = JSON.stringify(reviews);
+  var keyToFind = parseInt(req.params.id); // Id passed through the url
+ var data = reviews;
+ var index = data.map(function(d){d['id'];}).indexOf(keyToFind)
+ reviews.splice(index, 2);
+ json = JSON.stringify(reviews, null, 4);
+ fs.writeFile('./models/reviews.json', json, 'utf8'); // Write the file back
+ res.redirect("/reviews");
+ 
 });
 
 
 
 
 //============================Edit review page showing the review that you want to edit
-app.get('/editreview/:id', function(req, res) {
- function chooseProd(individual){
-  return individual.id === parseInt(req.params.id)
+app.get('/editreview/:id', function(req, res){
+ function chooseProd(indOne){
+   return indOne.id === parseInt(req.params.id)
+  
  }
- console.log("Id of this review is " +req.params.id);
- var individual = reviews.filter(chooseProd);//individual is the variable to just call one review 
- res.render('editreview', {individual:individual});
  
- console.log("Edit Review page");
-
-});
+ console.log("Id of this review is " + req.params.id);
+ // declare a variable called indOne which is a filter of reviews based on the filtering function above 
+  var indOne = reviews.filter(chooseProd);
+ // pass the filtered JSON data to the page as indOne
+ res.render('editreview' , {indOne:indOne});
+  console.log("Edit Review Page Shown");
+ });
 
 
 
@@ -669,11 +693,17 @@ app.post('/editreview/:id', function(req,res){
  var x = req.body.date
  var y = req.body.content
  var z = parseInt(req.params.id)
- reviews.splice(index, 1, {name: req.body.name, date: x, content: y, id: z});// splice is the function to replace data with other data, manipulation through the URL with an ID
+ reviews.splice(index, 2, {name: req.body.name, date: x, content: y, id: z});// splice is the function to replace data with other data, manipulation through the URL with an ID
  json = JSON.stringify(reviews, null, 4);// null and 4 is there so the the json data file is easier to read. 
  fs.writeFile('./models/reviews.json', json, 'utf8'); // Write the file back
  res.redirect("/reviews");
 });
+
+
+
+
+
+
 
 
 
