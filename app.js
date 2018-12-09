@@ -285,7 +285,7 @@ let sql = 'SELECT * from profile;'
     if(err) 
     throw (err);
     var username = req.user.Username
-res.render('profile', {root: VIEWS, res1,user:req.user, name:req.user.Username} );
+res.render('profile', {root: VIEWS, res1, user:req.user, name:req.user.Username} );
 console.log(username); // used to output activity in the console
 });
 console.log("profile"); // used to output activity in the console
@@ -589,7 +589,7 @@ app.get('/postjob',isLoggedIn, function (req, res) {
 //=================================================JSON code================================================================
 
 app.get('/reviews', function(req, res){
- res.render("reviews", {reviews:reviews, user:req.user, name:req.user.username}
+ res.render("reviews", {reviews:reviews}
  );
  console.log("Review Page");
 }
