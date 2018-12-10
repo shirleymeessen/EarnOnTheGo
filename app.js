@@ -409,8 +409,8 @@ console.log("apply section"); // used to output activity in the console
 });
 
 
-app.get('/candidates/:company', function(req, res){
- let sql = 'SELECT * FROM applied WHERE Company = "'+req.params.company+'";' 
+app.get('/candidates', function(req, res){
+ let sql = 'SELECT * FROM applied;' 
   let query = db.query(sql, (err, res2) =>{
     if(err) 
     throw (err);
