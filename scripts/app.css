@@ -38,7 +38,11 @@ h3{
     margin-left:10px;
 }
 
-
+h4{
+   font-size: 12px; 
+   font-family:Arial;
+   margin-left:10px; 
+}
 
 
 
@@ -379,7 +383,11 @@ input[type=password]{
 }
 
 
-
+.applyp {
+  color:white;
+    font-size: 2px
+    
+}
 
 
 

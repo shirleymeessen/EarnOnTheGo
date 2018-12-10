@@ -86,6 +86,16 @@ res.send("Table created")
  
 });
 
+app.get('/appliedtable', function(req,res){
+let sql = 'CREATE TABLE applied (applyId int NOT NULL AUTO_INCREMENT PRIMARY KEY, Username varchar(255), Company varchar(255), Jobtitle varchar(255), Description varchar(255));'
+let query = db.query(sql,(err,res)=>{
+ if (err) throw err;
+ console.log(err);
+});
+res.send("Table created")
+ 
+});
+
 // end creating table 
 
 
@@ -153,7 +163,7 @@ res.send("Item added")
  
  // query database to show if data has been inputted successfully
  app.get('/query', function(req,res){
- let sql = 'SELECT * from users' 
+ let sql = 'SELECT * from applied' 
  let query = db.query(sql,(err,res)=>{
    if (err) throw err;
    console.log(res);
@@ -184,6 +194,9 @@ let sql = 'SELECT * FROM jobs WHERE (title LIKE "%'+req.body.search+'%" OR descr
  
  console.log("Now you are on the jobs page!");
 });
+
+
+
 //===========================================================================================
 
 //============================================POSTJOBSECTION======================================
@@ -279,8 +292,8 @@ res.redirect('/jobs');
 
 
 // to show the jobs on the jobspage from the database
-app.get('/profile', function(req, res){
-let sql = 'SELECT * from profile;'
+app.get('/profile/:name', function(req, res){
+ let sql = 'SELECT * FROM profile WHERE Name = "'+req.params.name+'";'
   let query = db.query(sql, (err, res1) =>{
     if(err) 
     throw (err);
@@ -310,7 +323,7 @@ console.log(res);
 console.log("profile created");
 });
   
-res.render('jobseekers', {root: VIEWS});
+res.render('jobseekers', {root: VIEWS, user:req.user, name:req.user.Username});
 });
 
 
@@ -361,7 +374,62 @@ res.redirect('/jobseekers');
 });
 //=================================END JOBSEEKERS PROFILE
 
-//===============================================
+//=============================================APPLY SECTION
+
+app.get('/apply',isLoggedIn, function (req, res) {
+   if (req.user && req.user.jobseeker !== 1) {
+      return res.redirect("/notjobseeker");
+    }
+    res.render('apply', { root: VIEWS }); //changed to render instead of send because changed to Jade to render as html
+    console.log("apply to job"); // used to output activity in the console
+});
+
+app.post('/apply', function(req, res){
+let sql = 'INSERT INTO applied (Username, Company, Jobtitle, Description) VALUES ("'+req.body.username+'", "'+req.body.company+'", "'+req.body.jobtitle+'", "'+req.body.description+'");' 
+let query = db.query(sql,(err,res)=>{
+if (err) throw err;
+console.log(res);
+console.log("apply added");
+});
+  
+res.render('succes', {root: VIEWS});
+});
+
+app.get('/viewapply/:username', function(req, res){
+ let sql = 'SELECT * FROM applied WHERE Username = "'+req.params.username+'";'
+  let query = db.query(sql, (err, res2) =>{
+    if(err) 
+    throw (err);
+    var username = req.user.Username
+res.render('viewapply', {root: VIEWS, res2, user:req.user, name:req.user.Username} );
+console.log(username); // used to output activity in the console
+});
+console.log("apply section"); // used to output activity in the console
+
+});
+
+
+app.get('/candidates/:company', function(req, res){
+ let sql = 'SELECT * FROM applied WHERE Company = "'+req.params.company+'";' 
+  let query = db.query(sql, (err, res2) =>{
+    if(err) 
+    throw (err);
+    var company = req.user.Company
+res.render('candidates', {root: VIEWS, res2, user:req.user, company:req.user.Company} );
+console.log(company); // used to output activity in the console
+});
+console.log("candidate section"); // used to output activity in the console
+
+});
+
+
+
+
+
+
+//END APPLY SECTION
+
+//===============================================notloggedin or jobseeker/employer pages
 
 
 
@@ -469,7 +537,7 @@ app.get('/jobseekers',isLoggedIn, function (req, res) {
     if (req.user && req.user.jobseeker !== 1) {
       return res.redirect("/notjobseeker");
     }
-    res.render('jobseekers', { root: VIEWS }); //changed to render instead of send because changed to Jade to render as html
+    res.render('jobseekers', { root: VIEWS, user:req.user, name:req.user.Username }); //changed to render instead of send because changed to Jade to render as html
     console.log("Jobseekers page"); // used to output activity in the console
 });
 

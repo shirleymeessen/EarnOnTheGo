@@ -9,7 +9,14 @@ block content
        #appliestojons
         h2 View the applications to your Project/Task. 
         .postlink
-        a.button(href='/') Candidates
+        a.button(href='/candidates/#{user.Company}') Candidates
+        
+      if (!user)  
+       a(href="/login") Login   
+       a(href="/register") Register 
+       if (user)  
+       p Company name: #{user.Company}  
+       a(href="/logout") Logout
        
        
        

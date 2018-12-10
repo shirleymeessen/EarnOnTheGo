@@ -1,0 +1,15 @@
+extends layout
+block content
+    h2 Candidates for your Project/Task
+    if (user)  
+     p Company Name: #{user.Company}  
+     a(href="/logout") Logout
+    .grid-container
+           each row in res2
+              .job 
+                 h4 Username: #{row.Username}
+                 h4 Description: #{row.Description}
+                 h4 Project/Task: #{row.Jobtitle}
+                 p.applyp Company: #{row.Company} 
+                
+                

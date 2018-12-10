@@ -1,0 +1,15 @@
+extends layout
+block content
+    h2 Your applications
+    if (user)  
+     p You are currently logged in as username: #{user.Username}  
+     a(href="/logout") Logout
+    .grid-container
+           each row in res2
+              .job 
+                 h4 Company Name: #{row.Company}
+                 h4 Project/Task Title: #{row.Jobtitle}
+                 p.applyp Description: #{row.Description}
+                 p.applyp Username: #{row.Username} 
+                
+                

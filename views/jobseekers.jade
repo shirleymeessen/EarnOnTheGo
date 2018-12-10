@@ -1,5 +1,7 @@
 extends layout
 block content
+
+
      #searchforjobs
       h2 Complete a Project/Task that suits your skills and earn money!
       a.button(href='/jobs') Find a Project/Task
@@ -13,19 +15,24 @@ block content
         a.button(href='/createprofile') Create Profile
         h2 Already have a profile? Click on the link below to view, edit or delete. 
         .postlink
-        a.button(href='/profile') Profile
+        a.button(href='/profile/#{user.Username}') Profile
+        
+     if (!user)  
+      a(href="/login") Login   
+      a(href="/register") Register 
+      if (user)  
+      p You are currently logged in as #{user.Username}  
+      a(href="/logout") Logout
+
         
 
-       
-       
-       
         
      #applications
        #applies
         h2 Your applications
         p View your applications
         .postlink
-        a.button(href='/') Applications
+        a.button(href='/viewapply/#{user.Username}') Applications
        
           
 
