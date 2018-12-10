@@ -17,14 +17,6 @@ block content
         .postlink
         a.button(href='/profile/#{user.Username}') Profile
         
-     if (!user)  
-      a(href="/login") Login   
-      a(href="/register") Register 
-      if (user)  
-      p You are currently logged in as #{user.Username}  
-      a(href="/logout") Logout
-
-        
 
         
      #applications

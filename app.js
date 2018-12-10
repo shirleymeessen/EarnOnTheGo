@@ -112,7 +112,7 @@ res.send("Table created")
 
 
 app.get('/alterye', function(req, res){ 
-let sql = 'UPDATE users SET employer=TRUE, jobseeker=FALSE WHERE Id=24;'
+let sql = 'UPDATE users SET Company="Charlies" WHERE Id=24;'
 let query = db.query(sql, (err, res) => {  
     if(err) throw err;
   console.log(res);         
@@ -410,7 +410,7 @@ console.log("apply section"); // used to output activity in the console
 
 
 app.get('/candidates', function(req, res){
- let sql = 'SELECT * FROM applied;' 
+ let sql = 'SELECT * FROM applied WHERE Company = "' + req.user.Company + '";'; 
   let query = db.query(sql, (err, res2) =>{
     if(err) 
     throw (err);
@@ -720,7 +720,7 @@ console.log(newId);
 
 //==========================================DELETE REVIEWS
 
-app.get('/deletereview/:id', function(req, res){
+app.get('/deletereview/:Id', function(req, res){
  var json = JSON.stringify(reviews);
   var keyToFind = parseInt(req.params.id); // Id passed through the url
  var data = reviews;
@@ -736,9 +736,9 @@ app.get('/deletereview/:id', function(req, res){
 
 
 //============================Edit review page showing the review that you want to edit
-app.get('/editreview/:id', function(req, res){
+app.get('/editreview/:Id', function(req, res){
  function chooseProd(indOne){
-   return indOne.id === parseInt(req.params.id)
+   return indOne.Id === parseInt(req.params.id)
   
  }
  
@@ -753,7 +753,7 @@ app.get('/editreview/:id', function(req, res){
 
 
 //To actually edit the review
-app.post('/editreview/:id', function(req,res){
+app.post('/editreview/:Id', function(req,res){
  var json = JSON.stringify(reviews); // reviews because that is wat we called the variable at the top. 
  var keyToFind = parseInt(req.params.id); // Id passed through the url
  var data = reviews; //reviews JSON file
@@ -761,7 +761,7 @@ app.post('/editreview/:id', function(req,res){
  var x = req.body.date
  var y = req.body.content
  var z = parseInt(req.params.id)
- reviews.splice(index, 2, {name: req.body.name, date: x, content: y, id: z});// splice is the function to replace data with other data, manipulation through the URL with an ID
+ reviews.splice(index, 1, {name: req.body.name, date: x, content: y, id: z});// splice is the function to replace data with other data, manipulation through the URL with an ID
  json = JSON.stringify(reviews, null, 4);// null and 4 is there so the the json data file is easier to read. 
  fs.writeFile('./models/reviews.json', json, 'utf8'); // Write the file back
  res.redirect("/reviews");
