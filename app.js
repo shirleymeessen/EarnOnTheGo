@@ -720,12 +720,12 @@ console.log(newId);
 
 //==========================================DELETE REVIEWS
 
-app.get('/deletereview/:Id', function(req, res){
+app.get('/deletereview/:id', function(req, res){
  var json = JSON.stringify(reviews);
   var keyToFind = parseInt(req.params.id); // Id passed through the url
  var data = reviews;
  var index = data.map(function(d){d['id'];}).indexOf(keyToFind)
- reviews.splice(index, 2);
+ reviews.splice(index, 1);
  json = JSON.stringify(reviews, null, 4);
  fs.writeFile('./models/reviews.json', json, 'utf8'); // Write the file back
  res.redirect("/reviews");
@@ -736,9 +736,9 @@ app.get('/deletereview/:Id', function(req, res){
 
 
 //============================Edit review page showing the review that you want to edit
-app.get('/editreview/:Id', function(req, res){
+app.get('/editreview/:id', function(req, res){
  function chooseProd(indOne){
-   return indOne.Id === parseInt(req.params.id)
+   return indOne.id === parseInt(req.params.id)
   
  }
  
@@ -753,7 +753,7 @@ app.get('/editreview/:Id', function(req, res){
 
 
 //To actually edit the review
-app.post('/editreview/:Id', function(req,res){
+app.post('/editreview/:id', function(req,res){
  var json = JSON.stringify(reviews); // reviews because that is wat we called the variable at the top. 
  var keyToFind = parseInt(req.params.id); // Id passed through the url
  var data = reviews; //reviews JSON file
